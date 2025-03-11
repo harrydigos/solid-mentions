@@ -47,6 +47,7 @@ export function ContentEditableInput() {
   let editorRef: HTMLDivElement | undefined
 
   createEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (autoFocus && editorRef) {
       editorRef.focus()
       const range = document.createRange()
@@ -66,6 +67,7 @@ export function ContentEditableInput() {
         if (value !== mentionInputValue()) {
           setMentionInputValue(value)
         }
+        // eslint-disable-next-line no-console
         console.log('triggered change', { value, myControlleValue: mentionInputValue() })
       }}
       // multiline={false}
@@ -84,6 +86,7 @@ export function ContentEditableInput() {
           return
         }
 
+        // eslint-disable-next-line no-console
         console.log('clicked mention', event.target)
         event.preventDefault()
       }}
