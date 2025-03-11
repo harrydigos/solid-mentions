@@ -1,17 +1,17 @@
 {
-  "name": "{{name_of_lib}}",
+  "name": "solid-mentions",
   "version": "0.0.0",
-  "description": "{{desc_of_lib}}",
+  "description": "Solid mentions",
   "license": "MIT",
-  "author": "{{me}}",
+  "author": "harrydigos",
   "contributors": [],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/{{me}}/{{name_of_lib}}.git"
+    "url": "git+https://github.com/harrydigos/solid-mentions.git"
   },
-  "homepage": "https://github.com/{{me}}/{{name_of_lib}}#readme",
+  "homepage": "https://github.com/harrydigos/solid-mentions#readme",
   "bugs": {
-    "url": "https://github.com/{{me}}/{{name_of_lib}}/issues"
+    "url": "https://github.com/harrydigos/solid-mentions/issues"
   },
   "files": [
     "dist"
