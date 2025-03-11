@@ -27,27 +27,23 @@ jobs:
           languages: javascript
           queries: security-and-quality
 
-      # Autobuild attempts to build any compiled languages
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v2
-
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
         with:
-          category: '/language:javascript'
+          upload: false
           output: sarif-results
 
       # Only include files that are public
-      - name: Filter SARIF
-        uses: advanced-security/filter-sarif@v1
+      - name: filter-sarif
+        uses: advanced-security/filter-sarif@main
         with:
           patterns: |
-            +:/src/**/*.*
-            -:**/*.test.*
+            /src/**/*.*
+            -**/*.test.*
           input: sarif-results/javascript.sarif
           output: sarif-results/javascript.sarif
 
       - name: Upload SARIF
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: sarif-results/javascript.sarif
