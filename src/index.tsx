@@ -1,4 +1,4 @@
-import { createSignal, createEffect, For, Show } from 'solid-js'
+import { createEffect, For, Show } from 'solid-js'
 import { ContentEditable } from '@bigmistqke/solid-contenteditable'
 
 export type TriggerConfig = {
@@ -12,18 +12,14 @@ export type TriggerConfig = {
 }
 
 export type MentionsInputProps = {
+  value: string
+  onChange: (value: string) => void
   triggers: Array<TriggerConfig>
   autoFocus?: boolean
   disabled?: boolean
 }
 
 export function MentionsInput(props: MentionsInputProps) {
-  // const placeholder = 'Type something...';
-  // const maxLength = 500;
-
-  // const [isFocused, setIsFocused] = createSignal(false);
-  const [mentionInputValue, setMentionInputValue] = createSignal('Hello @user and #team!')
-
   let editorRef: HTMLDivElement | undefined
 
   createEffect(() => {
@@ -41,13 +37,11 @@ export function MentionsInput(props: MentionsInputProps) {
   return (
     <ContentEditable
       ref={editorRef}
-      value={mentionInputValue()}
+      value={props.value}
       onValue={value => {
-        if (value !== mentionInputValue()) {
-          setMentionInputValue(value)
-        }
+        props.onChange(value)
         // eslint-disable-next-line no-console
-        console.log('triggered change', { value, myControlleValue: mentionInputValue() })
+        console.log('triggered change', { value })
       }}
       // multiline={false}
       class="h-fit min-h-8 w-[400px] rounded-md border border-gray-500 bg-neutral-900 px-2 py-1 text-base text-white shadow-sm transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -70,9 +64,6 @@ export function MentionsInput(props: MentionsInputProps) {
         event.preventDefault()
       }}
     >
-      {/* <Show when={!isFocused() && (!editorRef || !editorRef?.textContent)}> */}
-      {/*   <div aria-hidden="true">{placeholder}</div> */}
-      {/* </Show> */}
       {value => (
         <For each={value.split('\n')}>
           {(line, lineIndex) => {
