@@ -1,44 +1,24 @@
-import {
-  Accessor,
-  Component,
-  createComputed,
-  createSignal,
-  createEffect,
-  For,
-  Show,
-} from 'solid-js'
+import { createSignal, createEffect, For, Show } from 'solid-js'
 import { ContentEditable } from '@bigmistqke/solid-contenteditable'
 
-export function createHello(): [Accessor<string>, (to: string) => void] {
-  const [hello, setHello] = createSignal('Hello World!')
-
-  return [hello, (to: string) => setHello(`Hello ${to}!`)]
+export type TriggerConfig = {
+  /**
+   * The character(s) that trigger mention suggestions
+   * (e.g. '@', '#', or ':')
+   */
+  trigger: string
+  name?: string
+  // TODO: add more properties
 }
 
-export const Hello: Component<{ to?: string }> = props => {
-  const [hello, setHello] = createHello()
-
-  // Console calls will be removed in production if `dropConsole` is enabled
-
-  // eslint-disable-next-line no-console
-  console.log('Hello World!')
-
-  createComputed(() => {
-    if (typeof props.to === 'string') setHello(props.to)
-  })
-
-  return (
-    <>
-      <div>{hello()}</div>
-    </>
-  )
+export type MentionsInputProps = {
+  triggers: Array<TriggerConfig>
+  autoFocus?: boolean
+  disabled?: boolean
 }
 
-export function ContentEditableInput() {
+export function MentionsInput(props: MentionsInputProps) {
   // const placeholder = 'Type something...';
-  const autoFocus = false
-  const triggers = ['@', '#']
-  // const disabled = false;
   // const maxLength = 500;
 
   // const [isFocused, setIsFocused] = createSignal(false);
@@ -47,8 +27,7 @@ export function ContentEditableInput() {
   let editorRef: HTMLDivElement | undefined
 
   createEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (autoFocus && editorRef) {
+    if (props.autoFocus && editorRef) {
       editorRef.focus()
       const range = document.createRange()
       const selection = window.getSelection()
@@ -80,7 +59,7 @@ export function ContentEditableInput() {
       aria-invalid="false"
       aria-autocomplete="list"
       // aria-label={"ariaLabel" || placeholder}
-      // contentEditable={!disabled}
+      contentEditable={!props.disabled}
       onClick={event => {
         if (!event.target.matches('span[role="button"]')) {
           return
@@ -105,8 +84,19 @@ export function ContentEditableInput() {
                     const isLastWord = () => line.split(' ').length - 1 === wordIndex()
                     return (
                       <>
-                        <Show when={triggers.some(t => word.startsWith(t))} fallback={word}>
-                          <span role="button" class="cursor-pointer rounded-xs bg-sky-700">
+                        <Show
+                          when={props.triggers.some(t => word.startsWith(t.trigger))}
+                          fallback={word}
+                        >
+                          <span
+                            role="button"
+                            style={{
+                              cursor: 'pointer',
+                              'border-radius': '2px',
+                              'background-color': 'blue',
+                              color: 'white',
+                            }}
+                          >
                             {word}
                           </span>
                         </Show>
