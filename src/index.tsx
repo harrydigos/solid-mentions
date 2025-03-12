@@ -1,4 +1,4 @@
-import { createEffect, For, Show } from 'solid-js'
+import { ComponentProps, createEffect, For, Show } from 'solid-js'
 import { ContentEditable } from '@bigmistqke/solid-contenteditable'
 
 export type TriggerConfig = {
@@ -17,7 +17,7 @@ export type MentionsInputProps = {
   triggers: Array<TriggerConfig>
   autoFocus?: boolean
   disabled?: boolean
-}
+} & Pick<ComponentProps<'div'>, 'class'>
 
 export function MentionsInput(props: MentionsInputProps) {
   let editorRef: HTMLDivElement | undefined
@@ -37,14 +37,14 @@ export function MentionsInput(props: MentionsInputProps) {
   return (
     <ContentEditable
       ref={editorRef}
-      value={props.value}
-      onValue={value => {
+      textContent={props.value}
+      onTextContent={value => {
         props.onChange(value)
         // eslint-disable-next-line no-console
         console.log('triggered change', { value })
       }}
       // multiline={false}
-      class="h-fit min-h-8 w-[400px] rounded-md border border-gray-500 bg-neutral-900 px-2 py-1 text-base text-white shadow-sm transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+      class={props.class}
       role="textbox"
       aria-multiline="false"
       // spellCheck="true"
@@ -63,11 +63,10 @@ export function MentionsInput(props: MentionsInputProps) {
         console.log('clicked mention', event.target)
         event.preventDefault()
       }}
-    >
-      {value => (
-        <For each={value.split('\n')}>
+      render={textContent => (
+        <For each={textContent().split('\n')}>
           {(line, lineIndex) => {
-            const isLastLine = () => value.split('\n').length - 1 === lineIndex()
+            const isLastLine = () => textContent().split('\n').length - 1 === lineIndex()
             return (
               <>
                 <For each={line.split(' ')}>
@@ -102,6 +101,6 @@ export function MentionsInput(props: MentionsInputProps) {
           }}
         </For>
       )}
-    </ContentEditable>
+    />
   )
 }
