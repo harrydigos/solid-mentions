@@ -1,15 +1,15 @@
-import { createSignal, type Component } from 'solid-js'
-import styles from './App.module.css'
-import { MentionsInput } from 'src'
+import { createSignal, type Component } from 'solid-js';
+import styles from './App.module.css';
+import { MentionsInput } from 'src';
 
 const App: Component = () => {
-  const [value, setValue] = createSignal('Hello @user and #team!')
+  const [value, setValue] = createSignal('Hello @user and #team!');
 
   return (
     <div class={styles.content}>
       <MentionsInput
         value={value()}
-        onChange={value => setValue(value)}
+        onChange={(value) => setValue(value)}
         triggers={[
           { trigger: '@', name: 'at-mention' },
           { trigger: '#', name: 'hash-mention' },
@@ -19,7 +19,7 @@ const App: Component = () => {
         multiline // ={false}
       />
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;

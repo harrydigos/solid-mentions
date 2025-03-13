@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite'
-import path from 'node:path'
-import solidPlugin from 'vite-plugin-solid'
+import { defineConfig } from 'vite';
+import path from 'node:path';
+import solidPlugin from 'vite-plugin-solid';
 
 export default defineConfig({
   base: './',
@@ -15,7 +15,7 @@ export default defineConfig({
       name: 'Reaplace env variables',
       transform(code, id) {
         if (id.includes('node_modules')) {
-          return code
+          return code;
         }
         return code
           .replace(/process\.env\.SSR/g, 'false')
@@ -25,7 +25,7 @@ export default defineConfig({
           .replace(/import\.meta\.env\.SSR/g, 'false')
           .replace(/import\.meta\.env\.DEV/g, 'true')
           .replace(/import\.meta\.env\.PROD/g, 'false')
-          .replace(/import\.meta\.env\.NODE_ENV/g, '"development"')
+          .replace(/import\.meta\.env\.NODE_ENV/g, '"development"');
       },
     },
   ],
@@ -35,4 +35,4 @@ export default defineConfig({
   build: {
     target: 'esnext',
   },
-})
+});
