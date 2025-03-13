@@ -17,6 +17,7 @@ export type MentionsInputProps = {
   triggers: Array<TriggerConfig>
   autoFocus?: boolean
   disabled?: boolean
+  multiline?: boolean
 } & Pick<ComponentProps<'div'>, 'class'>
 
 export function MentionsInput(props: MentionsInputProps) {
@@ -43,10 +44,9 @@ export function MentionsInput(props: MentionsInputProps) {
         // eslint-disable-next-line no-console
         console.log('triggered change', { value })
       }}
-      // multiline={false}
       class={props.class}
       role="textbox"
-      aria-multiline="false"
+      aria-multiline={props.multiline}
       // spellCheck="true"
       // autoCorrect="off"
       aria-haspopup="listbox"
@@ -54,6 +54,7 @@ export function MentionsInput(props: MentionsInputProps) {
       aria-autocomplete="list"
       // aria-label={"ariaLabel" || placeholder}
       contentEditable={!props.disabled}
+      singleline={!props.multiline}
       onClick={event => {
         if (!event.target.matches('span[role="button"]')) {
           return

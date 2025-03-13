@@ -9,6 +9,7 @@
 }
 
 .mentionsInput {
+  display: inline-block;
   width: 400px;
   height: fit-content;
   border-radius: 0.375rem;

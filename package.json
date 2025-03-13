@@ -85,6 +85,6 @@
     "pnpm": ">=9.0.0"
   },
   "dependencies": {
-    "@bigmistqke/solid-contenteditable": "^0.0.8"
+    "@bigmistqke/solid-contenteditable": "^0.0.10"
   }
 }
