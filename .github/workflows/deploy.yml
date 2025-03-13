@@ -1,13 +1,14 @@
-name: Build and Test
+name: Build and Deploy
 
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
+
+permissions:
+  contents: write # Required for GitHub Pages deployment
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -42,3 +43,9 @@ jobs:
         run: pnpm run test
         env:
           CI: true
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages # Deploy to this branch
+          folder: dist # Your build output directory
