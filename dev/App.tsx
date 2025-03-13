@@ -11,8 +11,8 @@ const App: Component = () => {
         value={value()}
         onChange={value => setValue(value)}
         triggers={[
-          { trigger: '@', name: 'at-mention', suggestions: [] },
-          { trigger: '#', name: 'hash-mention', suggestions: [] },
+          { trigger: '@', name: 'at-mention' },
+          { trigger: '#', name: 'hash-mention' },
         ]}
         autoFocus
         class={styles.mentionsInput}

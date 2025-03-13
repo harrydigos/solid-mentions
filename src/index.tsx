@@ -1,4 +1,4 @@
-import { ComponentProps, createEffect, For, Show } from 'solid-js'
+import { Accessor, ComponentProps, createEffect, For, JSX, Show } from 'solid-js'
 import { ContentEditable } from '@bigmistqke/solid-contenteditable'
 
 export type TriggerConfig = {
@@ -19,6 +19,42 @@ export type MentionsInputProps = {
   disabled?: boolean
   multiline?: boolean
 } & Pick<ComponentProps<'div'>, 'class'>
+
+function Split(props: {
+  value: string
+  delimiter: string
+  children: (value: string, index: Accessor<number>) => JSX.Element
+}) {
+  return (
+    <For each={props.value.split(props.delimiter)}>
+      {(value, index) => {
+        const isLast = () => index() === props.value.split(props.delimiter).length - 1
+        return (
+          <>
+            {props.children(value, index)}
+            <Show when={!isLast()}>{props.delimiter}</Show>
+          </>
+        )
+      }}
+    </For>
+  )
+}
+
+function Mention(props: { word: string }) {
+  return (
+    <span
+      role="button"
+      style={{
+        cursor: 'pointer',
+        'border-radius': '2px',
+        'background-color': 'blue',
+        color: 'white',
+      }}
+    >
+      {props.word}
+    </span>
+  )
+}
 
 export function MentionsInput(props: MentionsInputProps) {
   let editorRef: HTMLDivElement | undefined
@@ -65,42 +101,17 @@ export function MentionsInput(props: MentionsInputProps) {
         event.preventDefault()
       }}
       render={textContent => (
-        <For each={textContent().split('\n')}>
-          {(line, lineIndex) => {
-            const isLastLine = () => textContent().split('\n').length - 1 === lineIndex()
-            return (
-              <>
-                <For each={line.split(' ')}>
-                  {(word, wordIndex) => {
-                    const isLastWord = () => line.split(' ').length - 1 === wordIndex()
-                    return (
-                      <>
-                        <Show
-                          when={props.triggers.some(t => word.startsWith(t.trigger))}
-                          fallback={word}
-                        >
-                          <span
-                            role="button"
-                            style={{
-                              cursor: 'pointer',
-                              'border-radius': '2px',
-                              'background-color': 'blue',
-                              color: 'white',
-                            }}
-                          >
-                            {word}
-                          </span>
-                        </Show>
-                        <Show when={!isLastWord()}> </Show>
-                      </>
-                    )
-                  }}
-                </For>
-                <Show when={!isLastLine()}>{'\n'}</Show>
-              </>
-            )
-          }}
-        </For>
+        <Split value={textContent()} delimiter={'\n'}>
+          {line => (
+            <Split value={line} delimiter={' '}>
+              {word => (
+                <Show when={props.triggers.some(t => word.startsWith(t.trigger))} fallback={word}>
+                  <Mention word={word} />
+                </Show>
+              )}
+            </Split>
+          )}
+        </Split>
       )}
     />
   )
