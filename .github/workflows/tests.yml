@@ -1,14 +1,13 @@
-name: Build and Deploy
+name: Build and Test
 
 on:
   push:
     branches: [main]
-
-permissions:
-  contents: write # Required for GitHub Pages deployment
+  pull_request:
+    branches: [main]
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -33,11 +32,13 @@ jobs:
         env:
           NPM_CONFIG_REGISTRY: https://registry.npmjs.org
 
-      - name: Build dev
-        run: pnpm run build:dev
+      - name: Lint
+        run: pnpm run lint
 
-      - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          branch: gh-pages # The branch the content will be pushed to
-          folder: dev/dist # The folder containing your built site
+      - name: Build
+        run: pnpm run build
+
+      - name: Test
+        run: pnpm run test
+        env:
+          CI: true
