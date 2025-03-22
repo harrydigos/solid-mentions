@@ -1,3 +1,5 @@
+export * from './input';
+
 import { Accessor, ComponentProps, createEffect, For, JSX, Show } from 'solid-js';
 import { ContentEditable } from '@bigmistqke/solid-contenteditable';
 
