@@ -1,6 +1,6 @@
 import { createSignal, type Component } from 'solid-js';
 import styles from './App.module.css';
-import { MentionsInput } from 'src';
+import { MentionsInput, MentionsInput2 } from 'src';
 
 const App: Component = () => {
   const [value, setValue] = createSignal('Hello @user and #team!');
@@ -18,6 +18,8 @@ const App: Component = () => {
         class={styles.mentionsInput}
         multiline // ={false}
       />
+
+      <MentionsInput2 class={styles.mentionsInput} />
     </div>
   );
 };
