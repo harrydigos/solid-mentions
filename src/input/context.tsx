@@ -15,6 +15,28 @@ export function MentionsProvider(props: { children: JSX.Element }) {
     // activeConfig: null as MentionOptions | null,
   });
 
+  const openDropdown: MentionContext['actions']['openDropdown'] = (node) => {
+    const rect = node.getBoundingClientRect();
+    const inputRect = inputElement.getBoundingClientRect();
+
+    setDropdownState({
+      isOpen: true,
+      position: {
+        top: rect.bottom - inputRect.top,
+        left: rect.left - inputRect.left,
+      },
+      // activeConfig: config,
+    });
+  };
+
+  const closeDropdown = () => {
+    setDropdownState({
+      isOpen: false,
+      position: null,
+      // activeConfig: null,
+    });
+  };
+
   const context: MentionContext = {
     state: {
       input: {
@@ -56,30 +78,45 @@ export function MentionsProvider(props: { children: JSX.Element }) {
       },
     },
 
-    handlers: {},
+    handlers: {
+      onInput: (event) => {
+        const text = event.target.textContent || '';
+
+        // Check if @ was just typed
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0) {
+          const range = selection.getRangeAt(0);
+          const currentPosition = range.startOffset;
+
+          // Get the character before the cursor
+          if (currentPosition > 0) {
+            const textBeforeCursor = text.slice(0, currentPosition);
+            const lastChar = textBeforeCursor.slice(-1);
+
+            if (lastChar === '@') {
+              openDropdown(range);
+            }
+          }
+        }
+      },
+      onBeforeInput: (event) => {
+        // event.preventDefault();
+      },
+      onKeyDown: (event) => {
+        if (!dropdownState.isOpen) {
+          return;
+        }
+
+        if (event.key === 'Escape') {
+          closeDropdown();
+          // event.preventDefault();
+        }
+      },
+    },
 
     actions: {
-      openDropdown: (node, value, config) => {
-        const rect = node.getBoundingClientRect();
-        console.log('input', inputElement);
-        const inputRect = inputElement.getBoundingClientRect();
-
-        setDropdownState({
-          isOpen: true,
-          position: {
-            top: rect.bottom - inputRect.top,
-            left: rect.left - inputRect.left,
-          },
-          // activeConfig: config,
-        });
-      },
-      closeDropdown: () => {
-        setDropdownState({
-          isOpen: false,
-          position: null,
-          // activeConfig: null,
-        });
-      },
+      openDropdown,
+      closeDropdown,
     },
   };
 
