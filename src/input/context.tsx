@@ -1,44 +1,93 @@
-import { Accessor, JSX, Setter, createContext, createSignal, useContext } from 'solid-js';
+import { JSX, createContext, createSignal, useContext } from 'solid-js';
+import { createStore } from 'solid-js/store';
+import type { MentionContext } from './types';
 
-export const MyContext = createContext<{
-  popover: {
-    isOpen: Accessor<boolean>;
-    position: Accessor<{ top: number; left: number }>;
-  };
-  actions: {
-    popover: {
-      setIsOpen: Setter<boolean>;
-      setPosition: Setter<{ top: number; left: number }>;
-    };
-  };
-}>();
+export const MentionsContext = createContext<MentionContext>();
 
-export function Provider(props: { children: JSX.Element }) {
-  const [showPopover, setShowPopover] = createSignal(false);
-  const [popoverPosition, setPopoverPosition] = createSignal({ top: 0, left: 0 });
+export function MentionsProvider(props: { children: JSX.Element }) {
+  let inputElement!: HTMLDivElement;
+  const [inputValue, setInputValue] = createSignal('');
+  // const [mentionItems, setMentionItems] = createSignal<MentionItem[]>([]);
 
-  return (
-    <MyContext.Provider
-      value={{
-        popover: {
-          isOpen: showPopover,
-          position: popoverPosition,
+  const [dropdownState, setDropdownState] = createStore<MentionContext['state']['dropdown']>({
+    isOpen: false,
+    position: null,
+    // activeConfig: null as MentionOptions | null,
+  });
+
+  const context: MentionContext = {
+    state: {
+      input: {
+        get element() {
+          return inputElement;
         },
-        actions: {
-          popover: {
-            setIsOpen: setShowPopover,
-            setPosition: setPopoverPosition,
+        get value() {
+          return inputValue();
+        },
+      },
+
+      search: {},
+
+      dropdown: {
+        get isOpen() {
+          return dropdownState.isOpen;
+        },
+        get position() {
+          return dropdownState.position;
+        },
+      },
+    },
+
+    dom: {
+      setInputElement: (newInputElement: HTMLDivElement) => {
+        inputElement = newInputElement;
+      },
+    },
+
+    values: {
+      getValue: () => inputValue(),
+      setValue: (text: string) => {
+        setInputValue(text);
+        // Update the extracted mentions when text changes
+        // setMentionItems(extractMentionsFromValue(text));
+      },
+      getMentionItems: () => {
+        return [];
+      },
+    },
+
+    handlers: {},
+
+    actions: {
+      openDropdown: (node, value, config) => {
+        const rect = node.getBoundingClientRect();
+        console.log('input', inputElement);
+        const inputRect = inputElement.getBoundingClientRect();
+
+        setDropdownState({
+          isOpen: true,
+          position: {
+            top: rect.bottom - inputRect.top,
+            left: rect.left - inputRect.left,
           },
-        },
-      }}
-    >
-      {props.children}
-    </MyContext.Provider>
-  );
+          // activeConfig: config,
+        });
+      },
+      closeDropdown: () => {
+        setDropdownState({
+          isOpen: false,
+          position: null,
+          // activeConfig: null,
+        });
+      },
+    },
+  };
+
+  return <MentionsContext.Provider value={context}>{props.children}</MentionsContext.Provider>;
 }
 
-export function useMyContext() {
-  const value = useContext(MyContext);
+export function useMentionsContext() {
+  const value = useContext(MentionsContext);
 
   if (!value) {
     throw new Error('Missing context Provider');

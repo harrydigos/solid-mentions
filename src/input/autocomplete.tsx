@@ -1,5 +1,5 @@
 import { For, Show } from 'solid-js';
-import { useMyContext } from './context';
+import { useMentionsContext } from './context';
 
 const dummyMentions = [
   { id: 1, name: 'John Doe', username: 'johndoe' },
@@ -8,18 +8,18 @@ const dummyMentions = [
 ];
 
 export function Autocomplete() {
-  const { popover } = useMyContext();
+  const { state } = useMentionsContext();
 
   return (
-    <Show when={popover.isOpen()}>
+    <Show when={state.dropdown.isOpen}>
       <div
         style={{
           position: 'absolute',
           'background-color': 'white',
           'z-index': 10,
           width: '250px',
-          top: `${popover.position().top}px`,
-          left: `${popover.position().left}px`,
+          top: `${state.dropdown.position!.top}px`,
+          left: `${state.dropdown.position!.left}px`,
           color: 'black',
         }}
       >
