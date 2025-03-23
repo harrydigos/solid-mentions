@@ -33,35 +33,7 @@ export function MentionsInput2(props: MentionsInput2Props) {
 }
 
 export function MentionsInput2Content(props: MentionsInput2Props) {
-  const { actions, dom, state } = useMentionsContext();
-
-  const handleInput = (event: any) => {
-    const text = event.target.innerHTML;
-
-    // Check if @ was just typed
-    const selection = window.getSelection();
-    if (selection && selection.rangeCount > 0) {
-      const range = selection.getRangeAt(0);
-      const currentPosition = range.startOffset;
-
-      // Get the character before the cursor
-      if (currentPosition > 0) {
-        const textBeforeCursor = text.slice(0, currentPosition);
-        const lastChar = textBeforeCursor.slice(-1);
-
-        if (lastChar === '@') {
-          actions.openDropdown(range);
-        }
-      }
-    }
-  };
-
-  const handleKeyDown = (event: any) => {
-    if (event.key === 'Escape' && state.dropdown.isOpen) {
-      actions.closeDropdown();
-      event.preventDefault();
-    }
-  };
+  const { dom, state, handlers } = useMentionsContext();
 
   return (
     <div style={{ position: 'relative' }}>
@@ -71,13 +43,9 @@ export function MentionsInput2Content(props: MentionsInput2Props) {
           dom.setInputElement(el);
         }}
         contentEditable={true}
-        // onBeforeInput={(event) => {}}
-        // onKeyDown={mergeOnKeyDown}
-        // onInput={(e) => onChanges(e)}
-
-        onInput={handleInput}
-        onKeyDown={handleKeyDown}
-        // innerHTML={content()}
+        // onBeforeInput={handlers.onBeforeInput}
+        onInput={handlers.onInput}
+        onKeyDown={handlers.onKeyDown}
       />
 
       <Autocomplete />

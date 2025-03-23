@@ -35,7 +35,21 @@ export type MentionContext = {
     // serializeMentions: () => Record<string, MentionItem<any>>; // Get mentions as key-value pairs
   };
 
-  handlers: {};
+  handlers: {
+    onBeforeInput: (
+      event: InputEvent & {
+        currentTarget: HTMLDivElement;
+        target: Element;
+      },
+    ) => void;
+    onInput: (
+      event: InputEvent & {
+        currentTarget: HTMLDivElement;
+        target: Element;
+      },
+    ) => void;
+    onKeyDown: (event: KeyboardEvent) => void;
+  };
 
   actions: {
     openDropdown: (node: HTMLElement | Range, value?: string, config?: MentionOptions) => void;
