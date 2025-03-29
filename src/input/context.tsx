@@ -4,6 +4,36 @@ import type { MentionContext } from './types';
 
 export const MentionsContext = createContext<MentionContext>();
 
+function saveCaretPosition() {
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) return null;
+
+  const range = selection.getRangeAt(0);
+  return {
+    startContainer: range.startContainer,
+    startOffset: range.startOffset,
+  };
+}
+
+function restoreCaretPosition(
+  savedSelection: { startContainer: Node; startOffset: number } | null,
+) {
+  if (!savedSelection) return;
+
+  const selection = window.getSelection();
+  if (!selection) return;
+
+  const newRange = document.createRange();
+  newRange.setStart(
+    savedSelection.startContainer,
+    Math.min(savedSelection.startOffset, savedSelection.startContainer.textContent?.length || 0),
+  );
+  newRange.collapse(true);
+
+  selection.removeAllRanges();
+  selection.addRange(newRange);
+}
+
 export function MentionsProvider(props: { children: JSX.Element }) {
   let inputElement!: HTMLDivElement;
   const [inputValue, setInputValue] = createSignal('');
@@ -80,7 +110,9 @@ export function MentionsProvider(props: { children: JSX.Element }) {
 
     handlers: {
       onInput: (event) => {
-        const text = event.target.textContent || '';
+        event.preventDefault();
+        const text = inputElement.textContent || '';
+        const savedSelection = saveCaretPosition();
 
         // Check if @ was just typed
         const selection = window.getSelection();
@@ -98,6 +130,9 @@ export function MentionsProvider(props: { children: JSX.Element }) {
             }
           }
         }
+
+        inputElement.textContent = text;
+        restoreCaretPosition(savedSelection);
       },
       onBeforeInput: (event) => {
         // event.preventDefault();
