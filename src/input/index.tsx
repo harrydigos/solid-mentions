@@ -33,7 +33,7 @@ export function MentionsInput2(props: MentionsInput2Props) {
 }
 
 export function MentionsInput2Content(props: MentionsInput2Props) {
-  const { dom, state, handlers } = useMentionsContext();
+  const { dom, handlers } = useMentionsContext();
 
   return (
     <div style={{ position: 'relative' }}>
@@ -43,7 +43,11 @@ export function MentionsInput2Content(props: MentionsInput2Props) {
           dom.setInputElement(el);
         }}
         contentEditable={true}
-        // onBeforeInput={handlers.onBeforeInput}
+        // ignore these for now
+        onPaste={(event) => event.preventDefault()}
+        onDrop={(event) => event.preventDefault()}
+        //
+        onBeforeInput={handlers.onBeforeInput}
         onInput={handlers.onInput}
         onKeyDown={handlers.onKeyDown}
       />
